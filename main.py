@@ -1,7 +1,8 @@
+import math
 import os
 import random
 import sys
-import math
+
 import pygame
 
 
@@ -11,6 +12,7 @@ def game():
     size = width, height = 500, 500
     screen = pygame.display.set_mode(size)
     player_sprites = pygame.sprite.Group()
+    atack_sprites = pygame.sprite.Group()
     fps = 60
 
     def random_color():
@@ -34,26 +36,29 @@ def game():
             image = image.convert_alpha()
         return image
 
+    def calculate_new_xy(old_xy, speed, angle_in_radians):
+        new_x = old_xy[0] + (speed * math.cos(angle_in_radians))
+        new_y = old_xy[1] + (speed * math.sin(angle_in_radians))
+        return new_x, new_y
 
     class Attack(pygame.sprite.Sprite):
         original_image = load_image('attack.png')
         original_image = pygame.transform.smoothscale(original_image, (10, 10))
+        speed = 10
 
-        def __init__(self, x, y, move_to_x, move_to_y):
-            super().__init__(player_sprites)
+        def __init__(self, x, y):
+            super().__init__(atack_sprites)
+            self.angle = math.radians(-player.angle)
             self.image = Attack.original_image.copy()
             self.rect = self.image.get_rect(center=(x, y))
-            self.step_x = (move_to_x - x) / fps
-            self.step_y = (move_to_y - y) / fps
-            print(self.step_x, self.step_y)
 
         def update(self):
-            self.rect = self.rect.move(int(self.step_x), int(self.step_y))
-
+            self.rect.center = calculate_new_xy(self.rect.center, self.speed, self.angle)
 
     class Player(pygame.sprite.Sprite):
         original_image = load_image('player.png')
         original_image = pygame.transform.smoothscale(original_image, (118, 83))
+        angle = 0
 
         def __init__(self, x, y):
             super().__init__(player_sprites)
@@ -64,22 +69,20 @@ def game():
             # self.rect.center = (x, y)
             self.rect.size = (self.rect.w, self.rect.h)
 
-
         def rotate(self, mouse_x, mouse_y):
             rel_x, rel_y = mouse_x - self.pos[0], mouse_y - self.pos[1]
-            angle = math.atan2(rel_y, rel_x)
-            angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
-            self.image = pygame.transform.rotate(self.original_image, int(angle))
+            # angle = math.atan2(rel_y, rel_x)
+            self.angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
+            self.image = pygame.transform.rotate(self.original_image, int(self.angle))
             self.rect = self.image.get_rect(center=self.pos)
 
         def update(self):
             pass
 
-
-
     clock = pygame.time.Clock()
-
+    mouse_last_pos = (0, 0)
     player = Player(width // 2, height // 2)
+
     color = random_color()
     CHANGEBGEVENT = pygame.USEREVENT + 1
     CHANGEBGEVENT_SECOND = pygame.USEREVENT + 2
@@ -90,14 +93,19 @@ def game():
             screen.fill(normal_color)
         except:
             pass
+        atack_sprites.draw(screen)
         player_sprites.draw(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                Attack(width // 2, height // 2, event.pos[0], event.pos[1])
+                Attack(width // 2, height // 2)
             if event.type == pygame.MOUSEMOTION:
+                if 150 >= math.hypot(pygame.mouse.get_pos()[0] - width // 2,
+                                     pygame.mouse.get_pos()[1] - height // 2) <= 250:
+                    mouse_last_pos = pygame.mouse.get_pos()
                 player.rotate(mouse_x=pygame.mouse.get_pos()[0], mouse_y=pygame.mouse.get_pos()[1])
+
             if event.type == CHANGEBGEVENT:
                 timer_start = False
                 next_color = random_color()
@@ -126,6 +134,7 @@ def game():
                 else:
                     pygame.time.set_timer(CHANGEBGEVENT_SECOND, 1)
         player_sprites.update()
+        atack_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
 
