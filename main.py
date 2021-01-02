@@ -1,6 +1,6 @@
 import os
 import sys
-
+import random
 import pygame
 
 
@@ -10,6 +10,11 @@ def game():
     size = width, height = 500, 500
     screen = pygame.display.set_mode(size)
     player_sprites = pygame.sprite.Group()
+
+    def random_color():
+        rgbl = [255, 0, 0]
+        random.shuffle(rgbl)
+        return tuple(rgbl)
 
     def load_image(name, colorkey=None):
         fullname = os.path.join('images', name)
@@ -29,6 +34,7 @@ def game():
 
     class Player(pygame.sprite.Sprite):
         image = load_image('player.png')
+        image = pygame.transform.scale(image, (235, 165))
 
         def __init__(self, x, y):
             super().__init__(player_sprites)
@@ -36,10 +42,11 @@ def game():
             self.rect = self.image.get_rect()
             self.mask = pygame.mask.from_surface(self.image)
             self.rect.center = (x, y)
+            self.rect.size = (self.rect.w // 10, self.rect.h // 10)
 
     Player(width // 2, height // 2)
     while running:
-        screen.fill(pygame.Color('black'))
+        screen.fill(random_color())
         player_sprites.draw(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
