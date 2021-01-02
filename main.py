@@ -12,7 +12,8 @@ def game():
     size = width, height = 500, 500
     screen = pygame.display.set_mode(size)
     player_sprites = pygame.sprite.Group()
-    atack_sprites = pygame.sprite.Group()
+    attack_sprites = pygame.sprite.Group()
+    enemy_sprites = pygame.sprite.Group()
     fps = 60
 
     def random_color():
@@ -41,18 +42,58 @@ def game():
         new_y = old_xy[1] + (speed * math.sin(angle_in_radians))
         return new_x, new_y
 
+    class Player_live(pygame.sprite.Sprite):
+        original_image = load_image('live.png')
+        original_image = pygame.transform.smoothscale(original_image, (44, 36))
+
+        def __init__(self, x, y):
+            super().__init__(player_sprites)
+            self.pos = (x, y)
+            self.image = Player_live.original_image.copy()
+            self.rect = self.image.get_rect(center=(x, y))
+
+
+    class Enemy(pygame.sprite.Sprite):
+        original_image = load_image('bad_guy.png')
+        original_image = pygame.transform.smoothscale(original_image, (70, 78))
+        speed = 5
+
+        def __init__(self, x, y):
+            super().__init__(enemy_sprites)
+            self.pos = (x, y)
+            self.image = Enemy.original_image.copy()
+            self.rect = self.image.get_rect(center=(x, y))
+            self.mask = pygame.mask.from_surface(self.image)
+            step_to_x = width // 2 - x
+            step_to_y = height // 2 - y
+            self.angle = ((180 / math.pi) * -math.atan2(step_to_y, step_to_x))
+
+        def update(self):
+            self.image = pygame.transform.rotate(self.original_image, int(self.angle))
+            if not pygame.sprite.collide_mask(self, player) and not pygame.sprite.collide_mask(self, tank):
+                self.rect.center = calculate_new_xy(self.rect.center, self.speed, math.radians(-self.angle))
+            else:
+                player.lives -= 1
+                self.kill()
+
+
+
+
     class Attack(pygame.sprite.Sprite):
         original_image = load_image('attack.png')
         original_image = pygame.transform.smoothscale(original_image, (10, 10))
         speed = 10
 
         def __init__(self, x, y):
-            super().__init__(atack_sprites)
+            super().__init__(attack_sprites)
             self.angle = math.radians(-player.angle)
             self.image = Attack.original_image.copy()
+
             new_x, new_y = x, y
-            new_x += (player.rect.w // 2 - 20) * (1 if pygame.mouse.get_pos()[0] > width // 2 else -1)
-            new_y += (player.rect.h // 2 - 20) * (1 if pygame.mouse.get_pos()[1] > height // 2 else -1)
+            new_x += (player.rect.w // 2 - 20) * (
+                1 if pygame.mouse.get_pos()[0] > width // 2 else -1)
+            new_y += (player.rect.h // 2 - 20) * (
+                1 if pygame.mouse.get_pos()[1] > height // 2 else -1)
             self.rect = self.image.get_rect(center=(new_x, new_y))
 
         def update(self):
@@ -63,13 +104,15 @@ def game():
         # original_image = pygame.transform.smoothscale(original_image, (118, 90))
         original_image = pygame.transform.smoothscale(original_image, (150, 48))
         angle = 0
+        lives = 1
+        lives_obj = [Player_live(width - 44, 36)]
 
         def __init__(self, x, y):
             super().__init__(player_sprites)
             self.pos = (x, y)
             self.image = Player.original_image.copy()
             self.rect = self.image.get_rect(center=(x, y))
-            # self.mask = pygame.mask.from_surface(self.image)
+            self.mask = pygame.mask.from_surface(self.image)
             # self.rect.center = (x, y)
             self.rect.size = (self.rect.w, self.rect.h)
 
@@ -79,7 +122,6 @@ def game():
             self.angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
             self.image = pygame.transform.rotate(self.original_image, int(self.angle))
             self.rect = self.image.get_rect(center=self.pos)
-            print(self.rect.h, self.rect.bottom)
 
         def update(self):
             pass
@@ -93,15 +135,15 @@ def game():
             self.pos = (x, y)
             self.image = Tank.original_image.copy()
             self.rect = self.image.get_rect(center=(x, y))
-            # self.mask = pygame.mask.from_surface(self.image)
+            self.mask = pygame.mask.from_surface(self.image)
             # self.rect.center = (x, y)
             self.rect.size = (self.rect.w, self.rect.h)
 
     clock = pygame.time.Clock()
-    mouse_last_pos = (0, 0)
     tank = Tank(width // 2, height // 2)
     player = Player(width // 2, height // 2)
 
+    Enemy(0, 0)
     color = random_color()
     CHANGEBGEVENT = pygame.USEREVENT + 1
     CHANGEBGEVENT_SECOND = pygame.USEREVENT + 2
@@ -112,11 +154,15 @@ def game():
             screen.fill(normal_color)
         except:
             pass
-        atack_sprites.draw(screen)
+        attack_sprites.draw(screen)
         player_sprites.draw(screen)
+        enemy_sprites.draw(screen)
+        if player.lives == 0:
+            running = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 Attack(width // 2, height // 2)
             if event.type == pygame.MOUSEMOTION:
@@ -153,7 +199,8 @@ def game():
                 else:
                     pygame.time.set_timer(CHANGEBGEVENT_SECOND, 1)
         player_sprites.update()
-        atack_sprites.update()
+        attack_sprites.update()
+        enemy_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
 
