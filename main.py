@@ -50,7 +50,10 @@ def game():
             super().__init__(atack_sprites)
             self.angle = math.radians(-player.angle)
             self.image = Attack.original_image.copy()
-            self.rect = self.image.get_rect(center=(x, y))
+            new_x, new_y = x, y
+            new_x += (player.rect.w // 2 - 20) * (1 if pygame.mouse.get_pos()[0] > width // 2 else -1)
+            new_y += (player.rect.h // 2 - 20) * (1 if pygame.mouse.get_pos()[1] > height // 2 else -1)
+            self.rect = self.image.get_rect(center=(new_x, new_y))
 
         def update(self):
             self.rect.center = calculate_new_xy(self.rect.center, self.speed, self.angle)
@@ -76,6 +79,7 @@ def game():
             self.angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
             self.image = pygame.transform.rotate(self.original_image, int(self.angle))
             self.rect = self.image.get_rect(center=self.pos)
+            print(self.rect.h, self.rect.bottom)
 
         def update(self):
             pass
