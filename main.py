@@ -56,8 +56,9 @@ def game():
             self.rect.center = calculate_new_xy(self.rect.center, self.speed, self.angle)
 
     class Player(pygame.sprite.Sprite):
-        original_image = load_image('player.png')
-        original_image = pygame.transform.smoothscale(original_image, (118, 83))
+        original_image = load_image('tank_5.png')
+        # original_image = pygame.transform.smoothscale(original_image, (118, 90))
+        original_image = pygame.transform.smoothscale(original_image, (150, 48))
         angle = 0
 
         def __init__(self, x, y):
@@ -79,8 +80,22 @@ def game():
         def update(self):
             pass
 
+    class Tank(pygame.sprite.Sprite):
+        original_image = load_image('tank_1.png')
+        original_image = pygame.transform.smoothscale(original_image, (80, 80))
+
+        def __init__(self, x, y):
+            super().__init__(player_sprites)
+            self.pos = (x, y)
+            self.image = Tank.original_image.copy()
+            self.rect = self.image.get_rect(center=(x, y))
+            # self.mask = pygame.mask.from_surface(self.image)
+            # self.rect.center = (x, y)
+            self.rect.size = (self.rect.w, self.rect.h)
+
     clock = pygame.time.Clock()
     mouse_last_pos = (0, 0)
+    tank = Tank(width // 2, height // 2)
     player = Player(width // 2, height // 2)
 
     color = random_color()
