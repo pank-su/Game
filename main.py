@@ -11,6 +11,7 @@ def game():
     size = width, height = 500, 500
     screen = pygame.display.set_mode(size)
     player_sprites = pygame.sprite.Group()
+    fps = 60
 
     def random_color():
         rgbl = [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255)]
@@ -33,6 +34,23 @@ def game():
             image = image.convert_alpha()
         return image
 
+
+    class Attack(pygame.sprite.Sprite):
+        original_image = load_image('attack.png')
+        original_image = pygame.transform.smoothscale(original_image, (10, 10))
+
+        def __init__(self, x, y, move_to_x, move_to_y):
+            super().__init__(player_sprites)
+            self.image = Attack.original_image.copy()
+            self.rect = self.image.get_rect(center=(x, y))
+            self.step_x = (move_to_x - x) / fps
+            self.step_y = (move_to_y - y) / fps
+            print(self.step_x, self.step_y)
+
+        def update(self):
+            self.rect = self.rect.move(int(self.step_x), int(self.step_y))
+
+
     class Player(pygame.sprite.Sprite):
         original_image = load_image('player.png')
         original_image = pygame.transform.smoothscale(original_image, (118, 83))
@@ -44,7 +62,7 @@ def game():
             self.rect = self.image.get_rect(center=(x, y))
             # self.mask = pygame.mask.from_surface(self.image)
             # self.rect.center = (x, y)
-            self.rect.size = (self.rect.w // 10, self.rect.h // 10)
+            self.rect.size = (self.rect.w, self.rect.h)
 
 
         def rotate(self, mouse_x, mouse_y):
@@ -54,10 +72,13 @@ def game():
             self.image = pygame.transform.rotate(self.original_image, int(angle))
             self.rect = self.image.get_rect(center=self.pos)
 
+        def update(self):
+            pass
+
 
 
     clock = pygame.time.Clock()
-    fps = 60
+
     player = Player(width // 2, height // 2)
     color = random_color()
     CHANGEBGEVENT = pygame.USEREVENT + 1
@@ -73,6 +94,8 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                Attack(width // 2, height // 2, event.pos[0], event.pos[1])
             if event.type == pygame.MOUSEMOTION:
                 player.rotate(mouse_x=pygame.mouse.get_pos()[0], mouse_y=pygame.mouse.get_pos()[1])
             if event.type == CHANGEBGEVENT:
@@ -102,7 +125,7 @@ def game():
                     pygame.time.set_timer(CHANGEBGEVENT, 5000)
                 else:
                     pygame.time.set_timer(CHANGEBGEVENT_SECOND, 1)
-
+        player_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
 
