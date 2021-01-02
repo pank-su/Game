@@ -1,6 +1,7 @@
 import os
-import sys
 import random
+import sys
+import math
 import pygame
 
 
@@ -33,20 +34,31 @@ def game():
         return image
 
     class Player(pygame.sprite.Sprite):
-        image = load_image('player.png')
-        image = pygame.transform.scale(image, (235, 165))
+        original_image = load_image('player.png')
+        original_image = pygame.transform.smoothscale(original_image, (118, 83))
 
         def __init__(self, x, y):
             super().__init__(player_sprites)
-            self.image = Player.image
-            self.rect = self.image.get_rect()
-            self.mask = pygame.mask.from_surface(self.image)
-            self.rect.center = (x, y)
+            self.pos = (x, y)
+            self.image = Player.original_image.copy()
+            self.rect = self.image.get_rect(center=(x, y))
+            # self.mask = pygame.mask.from_surface(self.image)
+            # self.rect.center = (x, y)
             self.rect.size = (self.rect.w // 10, self.rect.h // 10)
+
+
+        def rotate(self, mouse_x, mouse_y):
+            rel_x, rel_y = mouse_x - self.pos[0], mouse_y - self.pos[1]
+            angle = math.atan2(rel_y, rel_x)
+            angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
+            self.image = pygame.transform.rotate(self.original_image, int(angle))
+            self.rect = self.image.get_rect(center=self.pos)
+
+
 
     clock = pygame.time.Clock()
     fps = 60
-    Player(width // 2, height // 2)
+    player = Player(width // 2, height // 2)
     color = random_color()
     CHANGEBGEVENT = pygame.USEREVENT + 1
     CHANGEBGEVENT_SECOND = pygame.USEREVENT + 2
@@ -61,13 +73,14 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEMOTION:
+                player.rotate(mouse_x=pygame.mouse.get_pos()[0], mouse_y=pygame.mouse.get_pos()[1])
             if event.type == CHANGEBGEVENT:
                 timer_start = False
                 next_color = random_color()
                 r_add = (next_color[0] - color[0]) / 2000
                 g_add = (next_color[1] - color[1]) / 2000
                 b_add = (next_color[2] - color[2]) / 2000
-                print(r_add, b_add, g_add)
                 pygame.time.set_timer(CHANGEBGEVENT_SECOND, 16)
             if event.type == CHANGEBGEVENT_SECOND and next_color != color:
                 if r_add < 0 and next_color[0] > color[0]:
@@ -84,17 +97,15 @@ def game():
                     b_add = 0
 
                 color = (color[0] + r_add, color[1] + g_add, color[2] + b_add)
-
-                print(color, next_color, (r_add, g_add, b_add) == (0, 0, 0), (r_add, g_add, b_add))
                 if (r_add, g_add, b_add) == (0, 0, 0) and not timer_start:
                     timer_start = True
                     pygame.time.set_timer(CHANGEBGEVENT, 5000)
                 else:
                     pygame.time.set_timer(CHANGEBGEVENT_SECOND, 1)
 
-
         pygame.display.flip()
         clock.tick(fps)
+
 
 if __name__ == '__main__':
     game()
