@@ -69,13 +69,15 @@ def game():
             self.angle = ((180 / math.pi) * -math.atan2(step_to_y, step_to_x))
 
         def update(self):
-            if (self.rect.centerx > 500 or self.rect.centerx < 0) or (self.rect.centery > 500 or self.rect.centery < 0):
+            if (self.rect.centerx > 500 or self.rect.centerx < 0) or (
+                    self.rect.centery > 500 or self.rect.centery < 0):
                 step_to_x = width // 2 - self.rect.centerx
                 step_to_y = height // 2 - self.rect.centery
                 self.angle = ((180 / math.pi) * -math.atan2(step_to_y, step_to_x))
             if width // 2 == self.rect.centerx and height // 2 == self.rect.centery:
                 print('bug')
             if self.lives == 0:
+                player.score += 1
                 self.kill()
             self.image = pygame.transform.rotate(self.original_image, int(self.angle))
             if not pygame.sprite.collide_mask(self, player) and not pygame.sprite.collide_mask(self,
@@ -114,6 +116,7 @@ def game():
         lives = 3
         lives_obj = [Player_live(width - 44 + 20, 20), Player_live(width - 44 * 2 + 20, 20),
                      Player_live(width - 44 * 3 + 20, 20)]
+        score = 0
 
         def __init__(self, x, y):
             super().__init__(player_sprites)
@@ -133,8 +136,7 @@ def game():
 
         def update(self):
             if self.lives < len(self.lives_obj):
-                self.lives_obj[len(self.lives_obj) -1].kill()
-
+                self.lives_obj[len(self.lives_obj) - 1].kill()
 
     class Tank(pygame.sprite.Sprite):
         original_image = load_image('tank_1.png')
@@ -160,6 +162,11 @@ def game():
     CHANGEBGEVENT = pygame.USEREVENT + 1
     CHANGEBGEVENT_SECOND = pygame.USEREVENT + 2
     pygame.time.set_timer(CHANGEBGEVENT, 1000)
+    font = pygame.font.Font('images/font.ttf', 48)
+
+    # def change_score(plus_score=1):
+    #     global text
+    #     text = font.render(int(text), True, (255, 255, 255))
     while running:
         try:
             normal_color = tuple(map(int, color))
@@ -169,6 +176,8 @@ def game():
         attack_sprites.draw(screen)
         player_sprites.draw(screen)
         enemy_sprites.draw(screen)
+        text = font.render(str(player.score), True, (255, 255, 255))
+        screen.blit(text, (width // 2 - 17, 0))
         if player.lives == 0:
             running = False
         list = pygame.sprite.groupcollide(attack_sprites, enemy_sprites, True, False)
@@ -225,7 +234,8 @@ def game():
         enemy_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
+    return player.score
 
 
 if __name__ == '__main__':
-    game()
+    print(game())
