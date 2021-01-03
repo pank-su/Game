@@ -14,7 +14,16 @@ def game():
     player_sprites = pygame.sprite.Group()
     attack_sprites = pygame.sprite.Group()
     enemy_sprites = pygame.sprite.Group()
+    spawn_in_iter = 1
+    time_to_iter = 2000
     fps = 60
+    difficult = 0
+    chance = 0.1
+
+    def change_dif(chance: float) -> bool:
+        one_part = chance * 100
+        ran_number = random.randint(1, 100)
+        return ran_number < one_part
 
     def random_color():
         rgbl = [random.randint(1, 255), random.randint(1, 255), random.randint(1, 255)]
@@ -192,16 +201,18 @@ def game():
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 Attack(width // 2, height // 2)
             elif event.type == pygame.MOUSEMOTION:
-                if 150 >= math.hypot(pygame.mouse.get_pos()[0] - width // 2,
-                                     pygame.mouse.get_pos()[1] - height // 2) <= 250:
-                    mouse_last_pos = pygame.mouse.get_pos()
+                # if 150 >= math.hypot(pygame.mouse.get_pos()[0] - width // 2,
+                #                      pygame.mouse.get_pos()[1] - height // 2) <= 250:
+                #     mouse_last_pos = pygame.mouse.get_pos()
                 player.rotate(mouse_x=pygame.mouse.get_pos()[0], mouse_y=pygame.mouse.get_pos()[1])
             elif event.type == SPAWNENEMYEVENT:
-                xy = (1, 1)
-                while (xy[0] > 0 and xy[1] > 0) and (xy[0] < 500 and xy[1] < 500):
-                    xy = (random.randint(-100, 600), random.randint(-100, 600))
-                print(xy)
-                Enemy(xy[0], xy[1], speed=random.randint(3, 5))
+                for i in range(spawn_in_iter):
+                    xy = (1, 1)
+                    while (xy[0] > 0 and xy[1] > 0) and (xy[0] < 500 and xy[1] < 500):
+                        xy = (random.randint(-100, 600), random.randint(-100, 600))
+                    print(xy)
+                    Enemy(xy[0], xy[1], speed=random.randint(3, 5))
+                pygame.time.set_timer(SPAWNENEMYEVENT, time_to_iter)
             elif event.type == CHANGEBGEVENT:
                 timer_start = False
                 next_color = random_color()
