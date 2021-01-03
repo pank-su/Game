@@ -17,8 +17,11 @@ def game():
     spawn_in_iter = 1
     time_to_iter = 2000
     fps = 60
-    difficult = 0
+    difficult = 1
+    enemy_speed = 3
     chance = 0.1
+    last_change_score = 0
+    last_score = 0
 
     def change_dif(chance: float) -> bool:
         one_part = chance * 100
@@ -145,7 +148,7 @@ def game():
 
         def update(self):
             if self.lives < len(self.lives_obj):
-                self.lives_obj[len(self.lives_obj) - 1].kill()
+                self.lives_obj[len(self.lives_obj) - (len(self.lives_obj) - self.lives)].kill()
 
     class Tank(pygame.sprite.Sprite):
         original_image = load_image('tank_1.png')
@@ -177,6 +180,17 @@ def game():
     #     global text
     #     text = font.render(int(text), True, (255, 255, 255))
     while running:
+        if player.score - last_change_score > 0 and last_score != player.score:
+            if change_dif(chance):
+                difficult += 1
+                last_change_score = player.score
+                chance = (0.1 / difficult) * (player.score - last_change_score)
+            else:
+                chance = (0.1 / difficult) * (player.score - last_change_score)
+            last_score = player.score
+        if difficult == 2:
+            enemy_speed = 4
+        print(difficult, chance)
         try:
             normal_color = tuple(map(int, color))
             screen.fill(normal_color)
@@ -211,7 +225,7 @@ def game():
                     while (xy[0] > 0 and xy[1] > 0) and (xy[0] < 500 and xy[1] < 500):
                         xy = (random.randint(-100, 600), random.randint(-100, 600))
                     print(xy)
-                    Enemy(xy[0], xy[1], speed=random.randint(3, 5))
+                    Enemy(xy[0], xy[1], speed=enemy_speed)
                 pygame.time.set_timer(SPAWNENEMYEVENT, time_to_iter)
             elif event.type == CHANGEBGEVENT:
                 timer_start = False
