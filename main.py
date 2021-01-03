@@ -73,6 +73,8 @@ def game():
                 step_to_x = width // 2 - self.rect.centerx
                 step_to_y = height // 2 - self.rect.centery
                 self.angle = ((180 / math.pi) * -math.atan2(step_to_y, step_to_x))
+            if width // 2 == self.rect.centerx and height // 2 == self.rect.centery:
+                print('bug')
             if self.lives == 0:
                 self.kill()
             self.image = pygame.transform.rotate(self.original_image, int(self.angle))
@@ -174,7 +176,7 @@ def game():
             for key in list.keys():
                 for enemy in list[key]:
                     enemy.lives -= 1
-                    print(enemy)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -187,10 +189,10 @@ def game():
                 player.rotate(mouse_x=pygame.mouse.get_pos()[0], mouse_y=pygame.mouse.get_pos()[1])
             elif event.type == SPAWNENEMYEVENT:
                 xy = (1, 1)
-                while (xy[0] > 0 and xy[1] > 0) or (xy[0] < 500 and xy[1] < 500):
-                    xy = (random.randint(-700, 700), random.randint(-700, 700))
+                while (xy[0] > 0 and xy[1] > 0) and (xy[0] < 500 and xy[1] < 500):
+                    xy = (random.randint(-100, 600), random.randint(-100, 600))
                 print(xy)
-                Enemy(xy[0], xy[1])
+                Enemy(xy[0], xy[1], speed=random.randint(3, 5))
             elif event.type == CHANGEBGEVENT:
                 timer_start = False
                 next_color = random_color()
