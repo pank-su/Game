@@ -16,6 +16,7 @@ def game():
     enemy_sprites = pygame.sprite.Group()
     spawn_in_iter = 1
     time_to_iter = 2000
+    enemy_lives = 1
     fps = 60
     difficult = 1
     enemy_speed = 3
@@ -83,8 +84,8 @@ def game():
         def update(self):
             if (self.rect.centerx > 500 or self.rect.centerx < 0) or (
                     self.rect.centery > 500 or self.rect.centery < 0):
-                step_to_x = width // 2 - self.rect.centerx
-                step_to_y = height // 2 - self.rect.centery
+                step_to_x = tank.rect.centerx - self.rect.centerx
+                step_to_y = tank.rect.centery - self.rect.centery
                 self.angle = ((180 / math.pi) * -math.atan2(step_to_y, step_to_x))
             if width // 2 == self.rect.centerx and height // 2 == self.rect.centery:
                 print('bug')
@@ -184,12 +185,26 @@ def game():
             if change_dif(chance):
                 difficult += 1
                 last_change_score = player.score
-                chance = (0.1 / difficult) * (player.score - last_change_score)
+                chance = (0.2 / difficult) * (player.score - last_change_score)
             else:
-                chance = (0.1 / difficult) * (player.score - last_change_score)
+                chance = (0.2 / difficult) * (player.score - last_change_score)
             last_score = player.score
         if difficult == 2:
             enemy_speed = 4
+        if difficult == 3:
+            time_to_iter = 1500
+            enemy_lives = random.randint(1, 2)
+        if difficult == 4:
+            time_to_iter = 1400
+            enemy_speed = 5
+            enemy_lives = random.randint(1, 2)
+        if difficult == 5:
+            spawn_in_iter = 2
+            enemy_lives = random.randint(1, 2)
+        if difficult == 6:
+            time_to_iter = 1000
+            enemy_lives = random.randint(1, 2)
+
         print(difficult, chance)
         try:
             normal_color = tuple(map(int, color))
@@ -222,10 +237,11 @@ def game():
             elif event.type == SPAWNENEMYEVENT:
                 for i in range(spawn_in_iter):
                     xy = (1, 1)
-                    while (xy[0] > 0 and xy[1] > 0) and (xy[0] < 500 and xy[1] < 500):
-                        xy = (random.randint(-100, 600), random.randint(-100, 600))
+                    while (xy[0] > 0 and xy[1] > 0) and (xy[0] < width and xy[1] < height):
+                        xy = (random.randint(-100, width + 100),
+                              random.randint(-100, height + 100))
                     print(xy)
-                    Enemy(xy[0], xy[1], speed=enemy_speed)
+                    Enemy(xy[0], xy[1], speed=enemy_speed, lives=enemy_lives)
                 pygame.time.set_timer(SPAWNENEMYEVENT, time_to_iter)
             elif event.type == CHANGEBGEVENT:
                 timer_start = False
