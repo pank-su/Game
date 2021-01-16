@@ -231,8 +231,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="resurce_pack.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
