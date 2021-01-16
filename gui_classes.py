@@ -8,7 +8,11 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 import sys
+import threading
+import time
 
+import requests
+from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import (QCoreApplication, QMetaObject,
                           QSize, Qt)
@@ -292,6 +296,50 @@ class Ui_Form_3(object):
         self.pushButton.setText(QCoreApplication.translate("Form", u"\u041e\u041a", None))
 
 
+# Don't work
+class Ui_Form_4(object):
+    def setupUi(self, Form):
+        if not Form.objectName():
+            Form.setObjectName(u"Form")
+        Form.resize(427, 323)
+        self.verticalLayout = QVBoxLayout(Form)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.label = QLabel(Form)
+        self.label.setObjectName(u"label")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        self.label.setScaledContents(True)
+
+        self.verticalLayout.addWidget(self.label)
+
+        self.label_2 = QLabel(Form)
+        self.label_2.setObjectName(u"label_2")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy1)
+        self.label_2.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayout.addWidget(self.label_2)
+
+        self.retranslateUi(Form)
+
+        QMetaObject.connectSlotsByName(Form)
+
+    # setupUi
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.label.setText("")
+        self.label_2.setText(QCoreApplication.translate("Form",
+                                                        u"\u041f\u0440\u043e\u0432\u0435\u0440\u044f\u0435\u043c \u043f\u043e\u0434\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u0435 \u043a \u0441\u0435\u0440\u0432\u0435\u0440\u0430\u043c. \u041f\u043e\u0434\u043e\u0436\u0434\u0438\u0442\u0435...",
+                                                        None))
+
+
 window = ''
 
 
@@ -300,6 +348,18 @@ def open_window(obj, x, y, w, h):
     window = obj()
     window.show()
     window.setGeometry(x, y + 20, w, h)
+
+
+# Don't work
+class Test_conection_window(QMainWindow, Ui_Form_4):
+    def __init__(self):
+        super().__init__()
+        self.central_widget = QtWidgets.QWidget(self)
+        self.setCentralWidget(self.central_widget)
+        self.setupUi(self.central_widget)
+        self.movie = QtGui.QMovie('images/loading_2.gif')
+        self.movie.start()
+        self.label.setMovie(self.movie)
 
 
 class First_window(QMainWindow, Ui_Form):
@@ -337,10 +397,24 @@ class Numbers(QMainWindow, Ui_Form_3):
         self.setupUi(self.central_widget)
 
 
+def check():
+    time.sleep(2)
+    x = 0
+    global ex
+    try:
+        requests.get('http://2f9f839aebbd.ngrok.io/')
+    except Exception:
+        ex.close()
+    time.sleep(2)
+    open_window(First_window, ex.x(), ex.y(), ex.width(), ex.height())
+    ex.close()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = First_window()
+    ex = Test_conection_window()
     ex.show()
+    x = threading.Thread(target=check())
+    x.start()
     app.exec_()
     print(1)
