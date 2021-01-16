@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import json
+import socket
 ################################################################################
 ## Form generated from reading UI file 'start_windowUXmIue.ui'
 ##
@@ -8,11 +10,9 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 import sys
-import threading
-import time
 
 import requests
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import (QCoreApplication, QMetaObject,
                           QSize, Qt)
@@ -352,6 +352,8 @@ def open_window(obj, x, y, w, h):
 
 # Don't work
 class Test_conection_window(QMainWindow, Ui_Form_4):
+    x_ = 1
+
     def __init__(self):
         super().__init__()
         self.central_widget = QtWidgets.QWidget(self)
@@ -360,6 +362,28 @@ class Test_conection_window(QMainWindow, Ui_Form_4):
         self.movie = QtGui.QMovie('images/loading_2.gif')
         self.movie.start()
         self.label.setMovie(self.movie)
+        self.timer = QtCore.QTimer(self)
+
+        self.timer.timeout.connect(self.check)
+        self.timer.start(2000)
+        self.timer_2 = QtCore.QTimer(self)
+        self.timer_2.timeout.connect(self.change_text)
+        self.timer_2.start(500)
+
+    def change_text(self):
+        self.label_2.setText('Проверяем подключение к серверам. Подождите' + '.' * self.x_)
+        if self.x_ == 3:
+            self.x_ = 0
+        self.x_ += 1
+
+    def check(self):
+        self.timer.stop()
+        try:
+            requests.get('http://2f9f839aebbd.ngrok.io/')
+        except Exception:
+            self.close()
+        open_window(First_window, self.x(), self.y(), self.width(), self.height())
+        self.close()
 
 
 class First_window(QMainWindow, Ui_Form):
@@ -369,6 +393,17 @@ class First_window(QMainWindow, Ui_Form):
         self.setCentralWidget(self.central_widget)
         self.setupUi(self.central_widget)
         self.pushButton_2.pressed.connect(self.open_reg)
+        self.pushButton.pressed.connect(self.login)
+
+    def login(self):
+        if requests.post('http://2f9f839aebbd.ngrok.io/login',
+                         json.dumps(
+                             {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                              'fast_login': '', 'login': 'frostkslo1@yandex.ru',
+                              'password': 'password123'})).text == 'true\n':
+            self.close()
+        else:
+            pass
 
     def open_reg(self):
         open_window(Reg_window, self.x(), self.y(), self.width(), self.height())
@@ -397,24 +432,9 @@ class Numbers(QMainWindow, Ui_Form_3):
         self.setupUi(self.central_widget)
 
 
-def check():
-    time.sleep(2)
-    x = 0
-    global ex
-    try:
-        requests.get('http://2f9f839aebbd.ngrok.io/')
-    except Exception:
-        ex.close()
-    time.sleep(2)
-    open_window(First_window, ex.x(), ex.y(), ex.width(), ex.height())
-    ex.close()
-
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Test_conection_window()
     ex.show()
-    x = threading.Thread(target=check())
-    x.start()
     app.exec_()
     print(1)
