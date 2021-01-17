@@ -432,9 +432,8 @@ class Numbers(QMainWindow, Ui_Form_3):
         self.setupUi(self.central_widget)
 
 
-if __name__ == '__main__':
+def main():
     app = QApplication(sys.argv)
     ex = Test_conection_window()
     ex.show()
     app.exec_()
-    print(1)
