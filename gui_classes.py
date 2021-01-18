@@ -2,13 +2,6 @@
 
 import json
 import socket
-################################################################################
-## Form generated from reading UI file 'start_windowUXmIue.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
 import sys
 
 import requests
@@ -18,6 +11,91 @@ from PyQt5.QtCore import (QCoreApplication, QMetaObject,
                           QSize, Qt)
 from PyQt5.QtGui import (QFont)
 from PyQt5.QtWidgets import *
+
+reg_mail = ''
+reg_login = ''
+reg_password = ''
+
+
+keyboard_en = [
+    'qwertyuiop',
+    'asdfghjkl',
+    'zxcvbnm'
+]
+keyboard_ru = [
+    'йцукенгшщзхъ',
+    'фывапролджэё',
+    'ячсмитьбю'
+]
+playing = False
+
+
+class PasswordError(Exception):
+    pass
+
+
+class LengthError(PasswordError):
+    pass
+
+
+class LetterError(PasswordError):
+    pass
+
+
+class DigitError(PasswordError):
+    pass
+
+
+class SequenceError(PasswordError):
+    pass
+
+
+def check_password(password: str):
+    if len(password) > 8 and lower(password) and upper(password) and num(password) and three_letters(
+            password):
+        return 'ok'
+    elif not len(password) > 8:
+        raise LengthError
+
+
+def lower(string: str):
+    for el in string:
+        if el.islower():
+            return True
+    raise LetterError
+
+
+def num(string: str):
+    for el in string:
+        if el.isnumeric():
+            return True
+    raise DigitError
+
+
+def upper(string: str):
+    for el in string:
+        if el.isupper():
+            return True
+    raise LetterError
+
+
+def three_letters(string: str):
+    for i in range(3):
+        for g in range(len(keyboard_en[i])):
+            some_letters = keyboard_en[i][g: g + 3]
+            if len(some_letters) == 3:
+                if some_letters in string.lower():
+                    raise SequenceError
+            else:
+                break
+        for g in range(len(keyboard_ru[i])):
+            some_letters = keyboard_ru[i][g: g + 3]
+            if len(some_letters) == 3:
+                if some_letters in string.lower():
+                    raise SequenceError
+            else:
+                break
+    return True
 
 
 class Ui_Form(object):
@@ -387,6 +465,8 @@ class Test_conection_window(QMainWindow, Ui_Form_4):
 
 
 class First_window(QMainWindow, Ui_Form):
+    error_dialog = ''
+
     def __init__(self):
         super().__init__()
         self.central_widget = QtWidgets.QWidget(self)
@@ -399,11 +479,14 @@ class First_window(QMainWindow, Ui_Form):
         if requests.post('http://2f9f839aebbd.ngrok.io/login',
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
-                              'fast_login': '', 'login': 'frostkslo1@yandex.ru',
-                              'password': 'password123'})).text == 'true\n':
+                              'fast_login': '', 'login': self.lineEdit.text(),
+                              'password': self.lineEdit_2.text()})).text == 'true\n':
+            global playing
+            playing = True
             self.close()
         else:
-            pass
+            self.error_dialog = QtWidgets.QErrorMessage()
+            self.error_dialog.showMessage('Неверный логин или пароль.')
 
     def open_reg(self):
         open_window(Reg_window, self.x(), self.y(), self.width(), self.height())
@@ -412,24 +495,82 @@ class First_window(QMainWindow, Ui_Form):
 
 
 class Reg_window(QMainWindow, Ui_Form_2):
+
     def __init__(self):
         super().__init__()
+        self.error_dialog = QtWidgets.QErrorMessage()
         self.central_widget = QtWidgets.QWidget(self)
         self.setCentralWidget(self.central_widget)
         self.setupUi(self.central_widget)
         self.pushButton.pressed.connect(self.send_numbers)
 
     def send_numbers(self):
-        open_window(Numbers, self.x(), self.y(), self.width(), self.height())
-        self.close()
+        if '@' not in self.lineEdit.text():
+            self.error_dialog.showMessage('Введённая почта не является почтой')
+            return
+        if self.lineEdit_2.text().split() == []:
+            self.error_dialog.showMessage('Логин не должен быть пустым.')
+            return
+        if requests.post('http://2f9f839aebbd.ngrok.io/register',
+                         json.dumps(
+                             {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                              'event': 'check_email', 'event_info': self.lineEdit.text()})) == 'true\n':
+            self.error_dialog.showMessage('Пользователь с такой почтой уже зарегестрирован.')
+            return
+        if requests.post('http://2f9f839aebbd.ngrok.io/register',
+                         json.dumps(
+                             {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                              'event': 'check_дщпшт', 'event_info': self.lineEdit_2.text()})).text == 'true\n':
+            self.error_dialog.showMessage('Пользователь с таким логином уже зарегестрирован.')
+            return
+        if self.lineEdit_3.text() != self.lineEdit_4.text():
+            self.error_dialog.showMessage('Пароли не совпадают.')
+            return
+        try:
+            if check_password(self.lineEdit_3.text()) == 'ok':
+                requests.post('http://2f9f839aebbd.ngrok.io/register',
+                              json.dumps(
+                                  {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                                   'event': 'wait_mail', 'event_info': self.lineEdit.text()}))
+                global reg_password, reg_mail, reg_login
+                reg_mail = self.lineEdit.text()
+                reg_login = self.lineEdit_2.text()
+                reg_password = self.lineEdit_3.text()
+                open_window(Numbers, self.x(), self.y(), self.width(), self.height())
+                self.close()
+        except Exception as error:
+            if error.__class__.__name__ == 'LengthError':
+                self.error_dialog.showMessage('Пароль должен быть больше 8 символов.')
+            elif error.__class__.__name__ == 'LetterError':
+                self.error_dialog.showMessage('В пароле должны быть строчные и заглавные буквы.')
+            elif error.__class__.__name__ == 'DigitError':
+                self.error_dialog.showMessage('В пароле должно быть хотя бы одно число.')
+            elif error.__class__.__name__ == 'SequenceError':
+                self.error_dialog.showMessage('Пароль слишком лёгкий.:-)')
 
 
 class Numbers(QMainWindow, Ui_Form_3):
     def __init__(self):
         super().__init__()
+        self.error_dialog = QtWidgets.QErrorMessage()
         self.central_widget = QtWidgets.QWidget(self)
         self.setCentralWidget(self.central_widget)
         self.setupUi(self.central_widget)
+        self.pushButton.pressed.connect(self.return_first_window)
+
+    def return_first_window(self):
+        if requests.post('http://2f9f839aebbd.ngrok.io/register',
+                            json.dumps(
+                                {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                                 'event': 'send_numbers',
+                                 'event_info': [self.lineEdit.text(), reg_login, reg_password,
+                                                reg_mail]})).text == 'true\n':
+            open_window(First_window, self.x(), self.y(), self.width(), self.height())
+            self.close()
+        else:
+            self.error_dialog.showMessage('Ты ввёл неправильные числа.')
+
+
 
 
 def main():
@@ -437,3 +578,4 @@ def main():
     ex = Test_conection_window()
     ex.show()
     app.exec_()
+    return playing
