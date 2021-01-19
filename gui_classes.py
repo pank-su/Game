@@ -16,7 +16,6 @@ reg_mail = ''
 reg_login = ''
 reg_password = ''
 
-
 keyboard_en = [
     'qwertyuiop',
     'asdfghjkl',
@@ -374,7 +373,6 @@ class Ui_Form_3(object):
         self.pushButton.setText(QCoreApplication.translate("Form", u"\u041e\u041a", None))
 
 
-# Don't work
 class Ui_Form_4(object):
     def setupUi(self, Form):
         if not Form.objectName():
@@ -416,6 +414,181 @@ class Ui_Form_4(object):
         self.label_2.setText(QCoreApplication.translate("Form",
                                                         u"\u041f\u0440\u043e\u0432\u0435\u0440\u044f\u0435\u043c \u043f\u043e\u0434\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u0435 \u043a \u0441\u0435\u0440\u0432\u0435\u0440\u0430\u043c. \u041f\u043e\u0434\u043e\u0436\u0434\u0438\u0442\u0435...",
                                                         None))
+
+
+class Ui_Form_5(object):
+    def setupUi(self, Form):
+        if not Form.objectName():
+            Form.setObjectName(u"Form")
+        Form.resize(449, 328)
+        self.verticalLayout = QVBoxLayout(Form)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.tabWidget = QTabWidget(Form)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tabWidget.setTabPosition(QTabWidget.North)
+        self.tabWidget.setTabShape(QTabWidget.Rounded)
+        self.tab = QWidget()
+        self.tab.setObjectName(u"tab")
+        self.tab.setMinimumSize(QSize(368, 0))
+        self.verticalLayout_2 = QVBoxLayout(self.tab)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.label = QLabel(self.tab)
+        self.label.setObjectName(u"label")
+
+        self.verticalLayout_2.addWidget(self.label)
+
+        self.label_2 = QLabel(self.tab)
+        self.label_2.setObjectName(u"label_2")
+
+        self.verticalLayout_2.addWidget(self.label_2)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label_4 = QLabel(self.tab)
+        self.label_4.setObjectName(u"label_4")
+
+        self.horizontalLayout_2.addWidget(self.label_4)
+
+        self.comboBox = QComboBox(self.tab)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
+        self.comboBox.setSizePolicy(sizePolicy)
+
+        self.horizontalLayout_2.addWidget(self.comboBox)
+
+        self.pushButton = QPushButton(self.tab)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.horizontalLayout_2.addWidget(self.pushButton)
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+
+        self.label_3 = QLabel(self.tab)
+        self.label_3.setObjectName(u"label_3")
+
+        self.verticalLayout_2.addWidget(self.label_3)
+
+        self.pushButton_2 = QPushButton(self.tab)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+
+        self.verticalLayout_2.addWidget(self.pushButton_2)
+
+        self.tabWidget.addTab(self.tab, "")
+        self.tab_3 = QWidget()
+        self.tab_3.setObjectName(u"tab_3")
+        self.verticalLayout_3 = QVBoxLayout(self.tab_3)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.label_6 = QLabel(self.tab_3)
+        self.label_6.setObjectName(u"label_6")
+
+        self.verticalLayout_3.addWidget(self.label_6)
+
+        self.label_5 = QLabel(self.tab_3)
+        self.label_5.setObjectName(u"label_5")
+
+        self.verticalLayout_3.addWidget(self.label_5)
+
+        self.pushButton_3 = QPushButton(self.tab_3)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
+        self.pushButton_3.setSizePolicy(sizePolicy1)
+
+        self.verticalLayout_3.addWidget(self.pushButton_3)
+
+        self.tabWidget.addTab(self.tab_3, "")
+        self.tab_2 = QWidget()
+        self.tab_2.setObjectName(u"tab_2")
+        self.verticalLayout_4 = QVBoxLayout(self.tab_2)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.label_7 = QLabel(self.tab_2)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayout_4.addWidget(self.label_7)
+
+        self.tabWidget.addTab(self.tab_2, "")
+        self.tab_4 = QWidget()
+        self.tab_4.setObjectName(u"tab_4")
+        self.verticalLayout_5 = QVBoxLayout(self.tab_4)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.listView = QListView(self.tab_4)
+        self.listView.setObjectName(u"listView")
+
+        self.verticalLayout_5.addWidget(self.listView)
+
+        self.tabWidget.addTab(self.tab_4, "")
+
+        self.verticalLayout.addWidget(self.tabWidget)
+
+        self.retranslateUi(Form)
+
+        self.tabWidget.setCurrentIndex(0)
+
+        QMetaObject.connectSlotsByName(Form)
+
+    # setupUi
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.label.setText(
+            QCoreApplication.translate("Form", u"\u041b\u043e\u0433\u0438\u043d: ", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"Email:", None))
+        self.label_4.setText(QCoreApplication.translate("Form", u"Gender:", None))
+        self.comboBox.setItemText(0, "")
+        self.comboBox.setItemText(1, QCoreApplication.translate("Form",
+                                                                u"\u041c\u0443\u0436\u0441\u043a\u043e\u0439",
+                                                                None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("Form",
+                                                                u"\u0416\u0435\u043d\u0441\u043a\u0438\u0439",
+                                                                None))
+        self.comboBox.setItemText(3, QCoreApplication.translate("Form",
+                                                                u"\u0411\u043e\u0435\u0432\u043e\u0439 \u0432\u0435\u0440\u0442\u043e\u043b\u0451\u0442",
+                                                                None))
+
+        self.pushButton.setText(QCoreApplication.translate("Form",
+                                                           u"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c",
+                                                           None))
+        self.label_3.setText(
+            QCoreApplication.translate("Form", u"\u041f\u0430\u0440\u043e\u043b\u044c: ********",
+                                       None))
+        self.pushButton_2.setText(QCoreApplication.translate("Form",
+                                                             u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435",
+                                                             None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab),
+                                  QCoreApplication.translate("Form",
+                                                             u"\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
+                                                             None))
+        self.label_6.setText(
+            QCoreApplication.translate("Form", u"\u0420\u0435\u043a\u043e\u0440\u0434: ", None))
+        self.label_5.setText(QCoreApplication.translate("Form",
+                                                        u"\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u043d\u0430\u0431\u0440\u0430\u043d\u043d\u044b\u0435 \u043e\u0447\u043a\u0438:",
+                                                        None))
+        self.pushButton_3.setText(
+            QCoreApplication.translate("Form", u"\u0418\u0433\u0440\u0430\u0442\u044c", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3),
+                                  QCoreApplication.translate("Form", u"\u0418\u0433\u0440\u0430",
+                                                             None))
+        self.label_7.setText(QCoreApplication.translate("Form",
+                                                        u"\u042d\u0442\u043e \u0435\u0449\u0451 \u043d\u0435 \u0433\u043e\u0442\u043e\u0432\u043e",
+                                                        None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2),
+                                  QCoreApplication.translate("Form",
+                                                             u"\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0430",
+                                                             None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4),
+                                  QCoreApplication.translate("Form",
+                                                             u"\u0422\u0430\u0431\u043b\u0438\u0446\u0430 \u043b\u0438\u0434\u0435\u0440\u043e\u0432",
+                                                             None))
 
 
 window = ''
@@ -514,13 +687,15 @@ class Reg_window(QMainWindow, Ui_Form_2):
         if requests.post('http://2f9f839aebbd.ngrok.io/register',
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
-                              'event': 'check_email', 'event_info': self.lineEdit.text()})) == 'true\n':
+                              'event': 'check_email',
+                              'event_info': self.lineEdit.text()})) == 'true\n':
             self.error_dialog.showMessage('Пользователь с такой почтой уже зарегестрирован.')
             return
         if requests.post('http://2f9f839aebbd.ngrok.io/register',
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
-                              'event': 'check_дщпшт', 'event_info': self.lineEdit_2.text()})).text == 'true\n':
+                              'event': 'check_дщпшт',
+                              'event_info': self.lineEdit_2.text()})).text == 'true\n':
             self.error_dialog.showMessage('Пользователь с таким логином уже зарегестрирован.')
             return
         if self.lineEdit_3.text() != self.lineEdit_4.text():
@@ -560,17 +735,15 @@ class Numbers(QMainWindow, Ui_Form_3):
 
     def return_first_window(self):
         if requests.post('http://2f9f839aebbd.ngrok.io/register',
-                            json.dumps(
-                                {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
-                                 'event': 'send_numbers',
-                                 'event_info': [self.lineEdit.text(), reg_login, reg_password,
-                                                reg_mail]})).text == 'true\n':
+                         json.dumps(
+                             {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                              'event': 'send_numbers',
+                              'event_info': [self.lineEdit.text(), reg_login, reg_password,
+                                             reg_mail]})).text == 'true\n':
             open_window(First_window, self.x(), self.y(), self.width(), self.height())
             self.close()
         else:
             self.error_dialog.showMessage('Ты ввёл неправильные числа.')
-
-
 
 
 def main():
