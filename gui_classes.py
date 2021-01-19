@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import *
 reg_mail = ''
 reg_login = ''
 reg_password = ''
+info = ''
 
 keyboard_en = [
     'qwertyuiop',
@@ -540,8 +541,7 @@ class Ui_Form_5(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label.setText(
-            QCoreApplication.translate("Form", u"\u041b\u043e\u0433\u0438\u043d: ", None))
+        self.label.setText(QCoreApplication.translate("Form", u"Login: ", None))
         self.label_2.setText(QCoreApplication.translate("Form", u"Email:", None))
         self.label_4.setText(QCoreApplication.translate("Form", u"Gender:", None))
         self.comboBox.setItemText(0, "")
@@ -558,9 +558,7 @@ class Ui_Form_5(object):
         self.pushButton.setText(QCoreApplication.translate("Form",
                                                            u"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c",
                                                            None))
-        self.label_3.setText(
-            QCoreApplication.translate("Form", u"\u041f\u0430\u0440\u043e\u043b\u044c: ********",
-                                       None))
+        self.label_3.setText(QCoreApplication.translate("Form", u"Password: ********", None))
         self.pushButton_2.setText(QCoreApplication.translate("Form",
                                                              u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435",
                                                              None))
@@ -649,13 +647,22 @@ class First_window(QMainWindow, Ui_Form):
         self.pushButton.pressed.connect(self.login)
 
     def login(self):
-        if requests.post('http://2f9f839aebbd.ngrok.io/login',
-                         json.dumps(
-                             {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
-                              'fast_login': '', 'login': self.lineEdit.text(),
-                              'password': self.lineEdit_2.text()})).text == 'true\n':
-            global playing
-            playing = True
+
+        try:
+            data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
+                                            json.dumps(
+                                                {'version': 1.0,
+                                                 'ip': socket.gethostbyname(socket.gethostname()),
+                                                 'fast_login': '', 'login': self.lineEdit.text(),
+                                                 'password': self.lineEdit_2.text()})).text)
+        except Exception:
+            self.error_dialog = QtWidgets.QErrorMessage()
+            self.error_dialog.showMessage('Неверный логин или пароль.')
+            return
+        if data['status']:
+            global info
+            info = data['info'][0]
+            open_window(Main_window, self.x(), self.y(), self.width(), self.height())
             self.close()
         else:
             self.error_dialog = QtWidgets.QErrorMessage()
@@ -744,6 +751,33 @@ class Numbers(QMainWindow, Ui_Form_3):
             self.close()
         else:
             self.error_dialog.showMessage('Ты ввёл неправильные числа.')
+
+
+class Main_window(QMainWindow, Ui_Form_5):
+    def __init__(self):
+        super().__init__()
+        self.central_widget = QtWidgets.QWidget(self)
+        self.setCentralWidget(self.central_widget)
+        self.setupUi(self.central_widget)
+        print(info)
+        self.label.setText(self.label.text() + info[0])
+        self.label_2.setText(self.label_2.text() + info[1])
+        if info[2] is not None:
+            self.comboBox.setCurrentIndex(info[2])
+        self.pushButton.pressed.connect(self.change_gender)
+        self.pushButton_3.pressed.connect(self.play)
+
+    def change_gender(self):
+        requests.post('http://2f9f839aebbd.ngrok.io/change',
+                      json.dumps({'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                                  'login': info[0],
+                                  'change_this': 'gender', 'change_to_this': self.comboBox.currentIndex()}))
+
+    def play(self):
+        global playing
+        playing = True
+        self.close()
+
 
 
 def main():

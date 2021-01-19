@@ -73,10 +73,10 @@ class Enemy(pygame.sprite.Sprite):
         self.angle = ((180 / math.pi) * -math.atan2(step_to_y, step_to_x))
 
     def update(self, tank, player):
-        if (self.rect.centerx > 500 or self.rect.centerx < 0) or (
-                self.rect.centery > 500 or self.rect.centery < 0):
-            step_to_x = tank.rect.centerx - self.rect.centerx
-            step_to_y = tank.rect.centery - self.rect.centery
+        if (self.rect.centerx > 425 or self.rect.centerx < 75) or (
+                self.rect.centery > 425 or self.rect.centery < 75):
+            step_to_x = width // 2 - self.rect.centerx
+            step_to_y = height // 2 - self.rect.centery
             self.angle = ((180 / math.pi) * -math.atan2(step_to_y, step_to_x))
         if width // 2 == self.rect.centerx and height // 2 == self.rect.centery:
             print('bug')
@@ -222,7 +222,7 @@ class Game():
                 self.time_to_iter = 1000
                 self.enemy_lives = random.randint(1, 2)
 
-            print(self.difficult, self.chance)
+            # print(self.difficult, self.chance)
             try:
                 normal_color = tuple(map(int, self.color))
                 self.screen.fill(normal_color)
