@@ -243,7 +243,7 @@ class Game():
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    return
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     Attack(width // 2, height // 2, self.attack_sprites, self.player)
                 elif event.type == pygame.MOUSEMOTION:
@@ -300,5 +300,7 @@ class Game():
 
 if __name__ == '__main__':
     game_ = Game()
-    game_.start()
+    scores = game_.start()
+    with open('scores.txt', 'w') as file:
+        file.write(str(scores))
     pygame.display.quit()

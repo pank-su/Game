@@ -16,6 +16,8 @@ reg_mail = ''
 reg_login = ''
 reg_password = ''
 info = ''
+login_or_mail = ''
+password = ''
 
 keyboard_en = [
     'qwertyuiop',
@@ -379,6 +381,9 @@ class Ui_Form_4(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(427, 323)
+        Form.setStyleSheet(u"QWidget{\n"
+                           "	font: 57 10pt \"PerfectDOSVGA437\";\n"
+                           "}")
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label = QLabel(Form)
@@ -422,6 +427,9 @@ class Ui_Form_5(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(449, 328)
+        Form.setStyleSheet(u"QWidget{\n"
+                           "	font: 57 10pt \"PerfectDOSVGA437\";\n"
+                           "}")
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidget = QTabWidget(Form)
@@ -660,7 +668,9 @@ class First_window(QMainWindow, Ui_Form):
             self.error_dialog.showMessage('Неверный логин или пароль.')
             return
         if data['status']:
-            global info
+            global info, login_or_mail, password
+            login_or_mail = self.lineEdit.text()
+            password = self.lineEdit_2.text()
             info = data['info'][0]
             open_window(Main_window, self.x(), self.y(), self.width(), self.height())
             self.close()
@@ -695,13 +705,13 @@ class Reg_window(QMainWindow, Ui_Form_2):
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                               'event': 'check_email',
-                              'event_info': self.lineEdit.text()})) == 'true\n':
+                              'event_info': self.lineEdit.text()})).text == 'true\n':
             self.error_dialog.showMessage('Пользователь с такой почтой уже зарегестрирован.')
             return
         if requests.post('http://2f9f839aebbd.ngrok.io/register',
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
-                              'event': 'check_дщпшт',
+                              'event': 'check_login',
                               'event_info': self.lineEdit_2.text()})).text == 'true\n':
             self.error_dialog.showMessage('Пользователь с таким логином уже зарегестрирован.')
             return
@@ -756,16 +766,24 @@ class Numbers(QMainWindow, Ui_Form_3):
 class Main_window(QMainWindow, Ui_Form_5):
     def __init__(self):
         super().__init__()
+        self.error_dialog = QtWidgets.QErrorMessage()
         self.central_widget = QtWidgets.QWidget(self)
         self.setCentralWidget(self.central_widget)
         self.setupUi(self.central_widget)
         print(info)
         self.label.setText(self.label.text() + info[0])
-        self.label_2.setText(self.label_2.text() + info[1])
+        self.label_2.setText(self.label_2.text() + ' ' + info[1])
         if info[2] is not None:
             self.comboBox.setCurrentIndex(info[2])
         self.pushButton.pressed.connect(self.change_gender)
         self.pushButton_3.pressed.connect(self.play)
+        self.pushButton_2.setEnabled(False)
+        if info[3]:
+            self.label_5.setText(self.label_5.text() + str(info[3]))
+            self.label_6.setText(self.label_6.text() + ' ' + str(info[4]))
+
+    # def change_all(self):
+    #     self.error_dialog.showMessage()
 
     def change_gender(self):
         requests.post('http://2f9f839aebbd.ngrok.io/change',
@@ -783,6 +801,25 @@ class Main_window(QMainWindow, Ui_Form_5):
 def main():
     app = QApplication(sys.argv)
     ex = Test_conection_window()
+    ex.show()
+    app.exec_()
+    return playing
+
+def open_main_window():
+    global info, playing
+    playing = False
+    try:
+        data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
+                                        json.dumps(
+                                            {'version': 1.0,
+                                             'ip': socket.gethostbyname(socket.gethostname()),
+                                             'fast_login': '', 'login': login_or_mail,
+                                             'password': password})).text)
+    except Exception:
+        print('Этого произойти не должно.')
+    info = data['info'][0]
+    app = QApplication(sys.argv)
+    ex = Main_window()
     ex.show()
     app.exec_()
     return playing
