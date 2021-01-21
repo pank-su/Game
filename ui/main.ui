@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>449</width>
-    <height>328</height>
+    <width>452</width>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab">
       <property name="minimumSize">
@@ -46,7 +46,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Email:</string>
+          <string>Email: </string>
          </property>
         </widget>
        </item>
@@ -171,7 +171,14 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QListView" name="listView"/>
+        <widget class="QTableWidget" name="tableWidget"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="text">
+          <string>Обновить</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -426,10 +426,7 @@ class Ui_Form_5(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(449, 328)
-        Form.setStyleSheet(u"QWidget{\n"
-                           "	font: 57 10pt \"PerfectDOSVGA437\";\n"
-                           "}")
+        Form.resize(452, 433)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidget = QTabWidget(Form)
@@ -530,10 +527,15 @@ class Ui_Form_5(object):
         self.tab_4.setObjectName(u"tab_4")
         self.verticalLayout_5 = QVBoxLayout(self.tab_4)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.listView = QListView(self.tab_4)
-        self.listView.setObjectName(u"listView")
+        self.tableWidget = QTableWidget(self.tab_4)
+        self.tableWidget.setObjectName(u"tableWidget")
 
-        self.verticalLayout_5.addWidget(self.listView)
+        self.verticalLayout_5.addWidget(self.tableWidget)
+
+        self.pushButton_4 = QPushButton(self.tab_4)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+
+        self.verticalLayout_5.addWidget(self.pushButton_4)
 
         self.tabWidget.addTab(self.tab_4, "")
 
@@ -541,7 +543,7 @@ class Ui_Form_5(object):
 
         self.retranslateUi(Form)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
 
         QMetaObject.connectSlotsByName(Form)
 
@@ -550,7 +552,7 @@ class Ui_Form_5(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.label.setText(QCoreApplication.translate("Form", u"Login: ", None))
-        self.label_2.setText(QCoreApplication.translate("Form", u"Email:", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"Email: ", None))
         self.label_4.setText(QCoreApplication.translate("Form", u"Gender:", None))
         self.comboBox.setItemText(0, "")
         self.comboBox.setItemText(1, QCoreApplication.translate("Form",
@@ -591,10 +593,14 @@ class Ui_Form_5(object):
                                   QCoreApplication.translate("Form",
                                                              u"\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0430",
                                                              None))
+        self.pushButton_4.setText(
+            QCoreApplication.translate("Form", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c",
+                                       None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4),
                                   QCoreApplication.translate("Form",
                                                              u"\u0422\u0430\u0431\u043b\u0438\u0446\u0430 \u043b\u0438\u0434\u0435\u0440\u043e\u0432",
                                                              None))
+    # retranslateUi
 
 
 window = ''
@@ -780,22 +786,43 @@ class Main_window(QMainWindow, Ui_Form_5):
         self.pushButton_2.setEnabled(False)
         if info[3]:
             self.label_5.setText(self.label_5.text() + str(info[3]))
-            self.label_6.setText(self.label_6.text() + ' ' + str(info[4]))
+            self.label_6.setText(self.label_6.text() + str(info[4]))
+        res = json.loads(requests.get('http://2f9f839aebbd.ngrok.io/leader_list').text)
+        print(res)
+        self.tableWidget.setColumnCount(2)
+        self.tableWidget.setRowCount(0)
+        for i, row in enumerate(res):
+            self.tableWidget.setRowCount(
+                self.tableWidget.rowCount() + 1)
+            for j, elem in enumerate(row):
+                self.tableWidget.setItem(
+                    i, j, QTableWidgetItem(str(elem)))
+        self.pushButton_4.pressed.connect(self.update_table)
+
 
     # def change_all(self):
     #     self.error_dialog.showMessage()
+
+    def update_table(self):
+        res = json.dumps(requests.get('http://2f9f839aebbd.ngrok.io/leader_list'))
+        for i, row in enumerate(res):
+            self.tableWidget.setRowCount(
+                self.tableWidget.rowCount() + 1)
+            for j, elem in enumerate(row):
+                self.tableWidget.setItem(
+                    i, j, QTableWidgetItem(str(elem)))
 
     def change_gender(self):
         requests.post('http://2f9f839aebbd.ngrok.io/change',
                       json.dumps({'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                                   'login': info[0],
-                                  'change_this': 'gender', 'change_to_this': self.comboBox.currentIndex()}))
+                                  'change_this': 'gender',
+                                  'change_to_this': self.comboBox.currentIndex()}))
 
     def play(self):
         global playing
         playing = True
         self.close()
-
 
 
 def main():
@@ -804,6 +831,7 @@ def main():
     ex.show()
     app.exec_()
     return playing
+
 
 def open_main_window():
     global info, playing
