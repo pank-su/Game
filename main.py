@@ -18,7 +18,7 @@ if __name__ == '__main__':
                                'login': gui_classes.login_or_mail,
                                'action': 'offline'}))
             break
-        if gui_classes.info[3] is None or scores > gui_classes.info[3]:
+        if gui_classes.info[3] is None or int(scores) > gui_classes.info[3]:
             requests.post('http://2f9f839aebbd.ngrok.io/change',
                           json.dumps(
                               {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),

@@ -785,12 +785,14 @@ class Main_window(QMainWindow, Ui_Form_5):
         self.pushButton_3.pressed.connect(self.play)
         self.pushButton_2.setEnabled(False)
         if info[3]:
-            self.label_5.setText(self.label_5.text() + str(info[3]))
-            self.label_6.setText(self.label_6.text() + str(info[4]))
+            self.label_6.setText(self.label_6.text() + str(info[3]))
+            self.label_5.setText(self.label_5.text() + str(info[4]))
         res = json.loads(requests.get('http://2f9f839aebbd.ngrok.io/leader_list').text)
         print(res)
         self.tableWidget.setColumnCount(2)
         self.tableWidget.setRowCount(0)
+        self.tableWidget.setHorizontalHeaderItem(0, QTableWidgetItem('Login'))
+        self.tableWidget.setHorizontalHeaderItem(1, QTableWidgetItem('Scores'))
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
@@ -804,7 +806,11 @@ class Main_window(QMainWindow, Ui_Form_5):
     #     self.error_dialog.showMessage()
 
     def update_table(self):
-        res = json.dumps(requests.get('http://2f9f839aebbd.ngrok.io/leader_list'))
+        self.tableWidget.setColumnCount(2)
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setHorizontalHeaderItem(0, QTableWidgetItem('Login'))
+        self.tableWidget.setHorizontalHeaderItem(1, QTableWidgetItem('Scores'))
+        res = json.loads(requests.get('http://2f9f839aebbd.ngrok.io/leader_list').text)
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
