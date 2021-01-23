@@ -3,6 +3,7 @@
 import json
 import socket
 import sys
+import threading
 
 import requests
 from PyQt5 import QtGui, QtCore
@@ -777,6 +778,7 @@ class Main_window(QMainWindow, Ui_Form_5):
         self.setCentralWidget(self.central_widget)
         self.setupUi(self.central_widget)
         print(info)
+        self.tabWidget.setCurrentIndex(0)
         self.label.setText(self.label.text() + info[0])
         self.label_2.setText(self.label_2.text() + ' ' + info[1])
         if info[2] is not None:
@@ -802,8 +804,7 @@ class Main_window(QMainWindow, Ui_Form_5):
         self.pushButton_4.pressed.connect(self.update_table)
 
 
-    # def change_all(self):
-    #     self.error_dialog.showMessage()
+
 
     def update_table(self):
         self.tableWidget.setColumnCount(2)
@@ -826,9 +827,36 @@ class Main_window(QMainWindow, Ui_Form_5):
                                   'change_to_this': self.comboBox.currentIndex()}))
 
     def play(self):
+        requests.post('http://2f9f839aebbd.ngrok.io/action',
+                      json.dumps(
+                          {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                           'login': login_or_mail,
+                           'action': 'playing'}))
         global playing
         playing = True
         self.close()
+
+
+def check_and_change_scores():
+    with open('scores.txt', 'r') as file:
+        scores = file.read()
+    if info[3] is None or int(scores) > info[3]:
+        requests.post('http://2f9f839aebbd.ngrok.io/change',
+                      json.dumps(
+                          {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                           'login': login_or_mail,
+                           'change_this': 'score', 'change_to_this': scores}))
+        requests.post('http://2f9f839aebbd.ngrok.io/change',
+                      json.dumps(
+                          {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                           'login': login_or_mail,
+                           'change_this': 'last_score', 'change_to_this': scores}))
+    else:
+        requests.post('http://2f9f839aebbd.ngrok.io/change',
+                      json.dumps(
+                          {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                           'login': login_or_mail,
+                           'change_this': 'last_score', 'change_to_this': scores}))
 
 
 def main():
@@ -842,15 +870,26 @@ def main():
 def open_main_window():
     global info, playing
     playing = False
-    try:
-        data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
-                                        json.dumps(
-                                            {'version': 1.0,
-                                             'ip': socket.gethostbyname(socket.gethostname()),
-                                             'fast_login': '', 'login': login_or_mail,
-                                             'password': password})).text)
-    except Exception:
-        print('Этого произойти не должно.')
+    # try:
+    #     data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
+    #                                     json.dumps(
+    #                                         {'version': 1.0,
+    #                                          'ip': socket.gethostbyname(socket.gethostname()),
+    #                                          'fast_login': '', 'login': login_or_mail,
+    #                                          'password': password})).text)
+    # except Exception:
+    #     print('Этого произойти не должно.')
+    # info = data['info'][0]
+
+    # Тут я хотел сделать оптимизацию с помощью потоков на PyQt кривой.
+    check_and_change_scores()
+
+    data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
+                                    json.dumps(
+                                        {'version': 1.0,
+                                         'ip': socket.gethostbyname(socket.gethostname()),
+                                         'fast_login': '', 'login': login_or_mail,
+                                         'password': password})).text)
     info = data['info'][0]
     app = QApplication(sys.argv)
     ex = Main_window()

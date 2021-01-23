@@ -65,6 +65,10 @@ class Enemy(pygame.sprite.Sprite):
         self.pos = (x, y)
         self.speed = speed
         self.lives = lives
+        if lives > 1:
+            original_image = load_image('bad_guy_2.png')
+            self.original_image = pygame.transform.smoothscale(original_image, (45, 50))
+            self.speed -= (self.lives - 1)
         self.image = Enemy.original_image.copy()
         self.rect = self.image.get_rect(center=(x, y))
         self.mask = pygame.mask.from_surface(self.image)
@@ -208,19 +212,27 @@ class Game():
                 self.last_score = self.player.score
             if self.difficult == 2:
                 self.enemy_speed = 4
-            if self.difficult == 3:
+            elif self.difficult == 3:
                 self.time_to_iter = 1500
                 self.enemy_lives = random.randint(1, 2)
-            if self.difficult == 4:
+            elif self.difficult == 4:
                 self.time_to_iter = 1400
                 self.enemy_speed = 5
                 self.enemy_lives = random.randint(1, 2)
-            if self.difficult == 5:
+            elif self.difficult == 5:
                 self.spawn_in_iter = 2
                 self.enemy_lives = random.randint(1, 2)
-            if self.difficult == 6:
+            elif self.difficult == 6:
+                self.time_to_iter = 1200
+                self.enemy_lives = random.randint(1, 2)
+            elif self.difficult == 7:
+                self.time_to_iter = 1100
+                self.enemy_lives = random.randint(1, 2)
+            elif self.difficult > 7:
+                self.spawn_in_iter = 3
                 self.time_to_iter = 1000
                 self.enemy_lives = random.randint(1, 2)
+
 
             # print(self.difficult, self.chance)
             try:
