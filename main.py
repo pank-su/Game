@@ -1,12 +1,9 @@
 import json
 import socket
-import threading
+
 import requests
 
 import gui_classes
-
-
-
 
 if __name__ == '__main__':
     bool_ = gui_classes.main()

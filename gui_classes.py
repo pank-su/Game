@@ -3,7 +3,6 @@
 import json
 import socket
 import sys
-import threading
 
 import requests
 from PyQt5 import QtGui, QtCore
@@ -802,9 +801,6 @@ class Main_window(QMainWindow, Ui_Form_5):
                 self.tableWidget.setItem(
                     i, j, QTableWidgetItem(str(elem)))
         self.pushButton_4.pressed.connect(self.update_table)
-
-
-
 
     def update_table(self):
         self.tableWidget.setColumnCount(2)
