@@ -12,6 +12,7 @@ from PyQt5.QtCore import (QCoreApplication, QMetaObject,
 from PyQt5.QtGui import (QFont)
 from PyQt5.QtWidgets import *
 
+# Переменные с данными
 reg_mail = ''
 reg_login = ''
 reg_password = ''
@@ -29,9 +30,10 @@ keyboard_ru = [
     'фывапролджэё',
     'ячсмитьбю'
 ]
+# Переменная которая отвечает за то чтобы после закрытия не запускалась игра.
 playing = False
 
-
+# Функция проверки пароля(из задачи про пароль)
 class PasswordError(Exception):
     pass
 
@@ -427,6 +429,9 @@ class Ui_Form_5(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(452, 433)
+        Form.setStyleSheet(u"QWidget{\n"
+                           "	font: 57 10pt \"PerfectDOSVGA437\";\n"
+                           "}")
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidget = QTabWidget(Form)
@@ -605,7 +610,7 @@ class Ui_Form_5(object):
 
 window = ''
 
-
+# Функция которая открывает окна
 def open_window(obj, x, y, w, h):
     global window
     window = obj()
@@ -613,7 +618,7 @@ def open_window(obj, x, y, w, h):
     window.setGeometry(x, y + 20, w, h)
 
 
-# Don't work
+# Окно проверки соединения
 class Test_conection_window(QMainWindow, Ui_Form_4):
     x_ = 1
 
@@ -648,7 +653,7 @@ class Test_conection_window(QMainWindow, Ui_Form_4):
         open_window(First_window, self.x(), self.y(), self.width(), self.height())
         self.close()
 
-
+# Окно авторизации
 class First_window(QMainWindow, Ui_Form):
     error_dialog = ''
 
@@ -689,7 +694,7 @@ class First_window(QMainWindow, Ui_Form):
 
         self.close()
 
-
+# Окно регистрации
 class Reg_window(QMainWindow, Ui_Form_2):
 
     def __init__(self):
@@ -746,7 +751,7 @@ class Reg_window(QMainWindow, Ui_Form_2):
             elif error.__class__.__name__ == 'SequenceError':
                 self.error_dialog.showMessage('Пароль слишком лёгкий.:-)')
 
-
+# Окно ввода чисел
 class Numbers(QMainWindow, Ui_Form_3):
     def __init__(self):
         super().__init__()
@@ -768,7 +773,7 @@ class Numbers(QMainWindow, Ui_Form_3):
         else:
             self.error_dialog.showMessage('Ты ввёл неправильные числа.')
 
-
+# Окно с таблицей лидеров и тп.
 class Main_window(QMainWindow, Ui_Form_5):
     def __init__(self):
         super().__init__()
@@ -832,7 +837,7 @@ class Main_window(QMainWindow, Ui_Form_5):
         playing = True
         self.close()
 
-
+# Функция которая проверяет и заменяет очки.
 def check_and_change_scores():
     with open('scores.txt', 'r') as file:
         scores = file.read()
@@ -877,7 +882,7 @@ def open_main_window():
     #     print('Этого произойти не должно.')
     # info = data['info'][0]
 
-    # Тут я хотел сделать оптимизацию с помощью потоков на PyQt кривой.
+    # Тут я хотел сделать оптимизацию с помощью потоков но PyQt кривой.(Оказалось что я кривой)
     check_and_change_scores()
 
     data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
