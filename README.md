@@ -3,14 +3,14 @@
 То есть тут есть недочёты или недоделки, или проект сделан коряво. ~~Вася удали этот абзац, если ты этот проект считаешь полностью готовым и он не порочит твою честь.~~ 
 
 ## Немного о файлах и каталогах
-- For_lyceum - папка с отчётом, презентацией и несколько файлов с показом программы
-- images - папка с изображениями для спрайтов
-- ui - папка с файлами .ui(интерфейсы Qt)
-- main.py - запускает скрипт 
-- gui_classes.py - файл ответственный за интерфейс Qt
-- game_classes.py - файл ответственный за саму игру
-- scores.txt - файл где хранятся последние набранные очки
-- server_url - файл с url сервера
+- [For_lyceum](https://github.com/Cynep-SU/Game/tree/master/For_lyceum) - папка с отчётом, презентацией и несколько файлов с показом программы
+- [images](https://github.com/Cynep-SU/Game/tree/master/images) - папка с изображениями для спрайтов
+- [ui](https://github.com/Cynep-SU/Game/tree/master/ui) - папка с файлами .ui(интерфейсы Qt)
+- [main.py](https://github.com/Cynep-SU/Game/blob/master/main.py) - запускает скрипт 
+- [gui_classes.py](https://github.com/Cynep-SU/Game/blob/master/gui_classes.py) - файл ответственный за интерфейс Qt
+- [game_classes.py](https://github.com/Cynep-SU/Game/blob/master/game_classes.py) - файл ответственный за саму игру
+- [scores.txt](https://github.com/Cynep-SU/Game/blob/master/scores.txt) - файл где хранятся последние набранные очки
+- [server_url](https://github.com/Cynep-SU/Game/blob/master/server_url.txt) - файл с url сервера
 
 ## Что это?
 Это игра, хотя это и так понятно по названию репозитория. Но что именно это за игра. Это игра можно сказать подобие старых аркад, где ты отстреливаешь бесконечные волны врагов. В игре присутствует таблица лидеров, где можно увидеть результаты игроков со всего мира.
