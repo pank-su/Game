@@ -647,7 +647,7 @@ class Test_conection_window(QMainWindow, Ui_Form_4):
     def check(self):
         self.timer.stop()
         try:
-            requests.get('http://2f9f839aebbd.ngrok.io/')
+            requests.get('https://b2a076121e8e.ngrok.io/')
         except Exception:
             self.close()
         open_window(First_window, self.x(), self.y(), self.width(), self.height())
@@ -668,7 +668,7 @@ class First_window(QMainWindow, Ui_Form):
     def login(self):
 
         try:
-            data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
+            data = json.loads(requests.post('https://b2a076121e8e.ngrok.io/login',
                                             json.dumps(
                                                 {'version': 1.0,
                                                  'ip': socket.gethostbyname(socket.gethostname()),
@@ -712,14 +712,14 @@ class Reg_window(QMainWindow, Ui_Form_2):
         if self.lineEdit_2.text().split() == []:
             self.error_dialog.showMessage('Логин не должен быть пустым.')
             return
-        if requests.post('http://2f9f839aebbd.ngrok.io/register',
+        if requests.post('https://b2a076121e8e.ngrok.io/register',
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                               'event': 'check_email',
                               'event_info': self.lineEdit.text()})).text == 'true\n':
             self.error_dialog.showMessage('Пользователь с такой почтой уже зарегестрирован.')
             return
-        if requests.post('http://2f9f839aebbd.ngrok.io/register',
+        if requests.post('https://b2a076121e8e.ngrok.io/register',
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                               'event': 'check_login',
@@ -731,7 +731,7 @@ class Reg_window(QMainWindow, Ui_Form_2):
             return
         try:
             if check_password(self.lineEdit_3.text()) == 'ok':
-                requests.post('http://2f9f839aebbd.ngrok.io/register',
+                requests.post('https://b2a076121e8e.ngrok.io/register',
                               json.dumps(
                                   {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                                    'event': 'wait_mail', 'event_info': self.lineEdit.text()}))
@@ -762,7 +762,7 @@ class Numbers(QMainWindow, Ui_Form_3):
         self.pushButton.pressed.connect(self.return_first_window)
 
     def return_first_window(self):
-        if requests.post('http://2f9f839aebbd.ngrok.io/register',
+        if requests.post('https://b2a076121e8e.ngrok.io/register',
                          json.dumps(
                              {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                               'event': 'send_numbers',
@@ -793,7 +793,7 @@ class Main_window(QMainWindow, Ui_Form_5):
         if info[3]:
             self.label_6.setText(self.label_6.text() + str(info[3]))
             self.label_5.setText(self.label_5.text() + str(info[4]))
-        res = json.loads(requests.get('http://2f9f839aebbd.ngrok.io/leader_list').text)
+        res = json.loads(requests.get('https://b2a076121e8e.ngrok.io/leader_list').text)
         print(res)
         self.tableWidget.setColumnCount(2)
         self.tableWidget.setRowCount(0)
@@ -812,7 +812,7 @@ class Main_window(QMainWindow, Ui_Form_5):
         self.tableWidget.setRowCount(0)
         self.tableWidget.setHorizontalHeaderItem(0, QTableWidgetItem('Login'))
         self.tableWidget.setHorizontalHeaderItem(1, QTableWidgetItem('Scores'))
-        res = json.loads(requests.get('http://2f9f839aebbd.ngrok.io/leader_list').text)
+        res = json.loads(requests.get('https://b2a076121e8e.ngrok.io/leader_list').text)
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
@@ -821,14 +821,14 @@ class Main_window(QMainWindow, Ui_Form_5):
                     i, j, QTableWidgetItem(str(elem)))
 
     def change_gender(self):
-        requests.post('http://2f9f839aebbd.ngrok.io/change',
+        requests.post('https://b2a076121e8e.ngrok.io/change',
                       json.dumps({'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                                   'login': info[0],
                                   'change_this': 'gender',
                                   'change_to_this': self.comboBox.currentIndex()}))
 
     def play(self):
-        requests.post('http://2f9f839aebbd.ngrok.io/action',
+        requests.post('https://b2a076121e8e.ngrok.io/action',
                       json.dumps(
                           {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                            'login': login_or_mail,
@@ -842,18 +842,18 @@ def check_and_change_scores():
     with open('scores.txt', 'r') as file:
         scores = file.read()
     if info[3] is None or int(scores) > info[3]:
-        requests.post('http://2f9f839aebbd.ngrok.io/change',
+        requests.post('https://b2a076121e8e.ngrok.io/change',
                       json.dumps(
                           {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                            'login': login_or_mail,
                            'change_this': 'score', 'change_to_this': scores}))
-        requests.post('http://2f9f839aebbd.ngrok.io/change',
+        requests.post('https://b2a076121e8e.ngrok.io/change',
                       json.dumps(
                           {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                            'login': login_or_mail,
                            'change_this': 'last_score', 'change_to_this': scores}))
     else:
-        requests.post('http://2f9f839aebbd.ngrok.io/change',
+        requests.post('hhttps://b2a076121e8e.ngrok.io/change',
                       json.dumps(
                           {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                            'login': login_or_mail,
