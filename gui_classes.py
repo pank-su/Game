@@ -3,7 +3,6 @@
 import json
 import socket
 import sys
-import threading
 
 import requests
 from PyQt5 import QtGui, QtCore
@@ -33,7 +32,6 @@ keyboard_ru = [
 ]
 # Переменная которая отвечает за то чтобы после закрытия не запускалась игра.
 playing = False
-
 
 # Функция проверки пароля(из задачи про пароль)
 class PasswordError(Exception):
@@ -612,7 +610,6 @@ class Ui_Form_5(object):
 
 window = ''
 
-
 # Функция которая открывает окна
 def open_window(obj, x, y, w, h):
     global window
@@ -656,7 +653,6 @@ class Test_conection_window(QMainWindow, Ui_Form_4):
         open_window(First_window, self.x(), self.y(), self.width(), self.height())
         self.close()
 
-
 # Окно авторизации
 class First_window(QMainWindow, Ui_Form):
     error_dialog = ''
@@ -697,7 +693,6 @@ class First_window(QMainWindow, Ui_Form):
         open_window(Reg_window, self.x(), self.y(), self.width(), self.height())
 
         self.close()
-
 
 # Окно регистрации
 class Reg_window(QMainWindow, Ui_Form_2):
@@ -756,7 +751,6 @@ class Reg_window(QMainWindow, Ui_Form_2):
             elif error.__class__.__name__ == 'SequenceError':
                 self.error_dialog.showMessage('Пароль слишком лёгкий.:-)')
 
-
 # Окно ввода чисел
 class Numbers(QMainWindow, Ui_Form_3):
     def __init__(self):
@@ -779,11 +773,9 @@ class Numbers(QMainWindow, Ui_Form_3):
         else:
             self.error_dialog.showMessage('Ты ввёл неправильные числа.')
 
-
 # Окно с таблицей лидеров и тп.
 class Main_window(QMainWindow, Ui_Form_5):
     def __init__(self):
-        global window
         super().__init__()
         self.error_dialog = QtWidgets.QErrorMessage()
         self.central_widget = QtWidgets.QWidget(self)
@@ -814,7 +806,6 @@ class Main_window(QMainWindow, Ui_Form_5):
                 self.tableWidget.setItem(
                     i, j, QTableWidgetItem(str(elem)))
         self.pushButton_4.pressed.connect(self.update_table)
-        window = self
 
     def update_table(self):
         self.tableWidget.setColumnCount(2)
@@ -837,23 +828,17 @@ class Main_window(QMainWindow, Ui_Form_5):
                                   'change_to_this': self.comboBox.currentIndex()}))
 
     def play(self):
+        requests.post('http://2f9f839aebbd.ngrok.io/action',
+                      json.dumps(
+                          {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                           'login': login_or_mail,
+                           'action': 'playing'}))
         global playing
         playing = True
         self.close()
 
-
-# Функция для многопотока.
-def change_action_to_playing():
-    requests.post('http://2f9f839aebbd.ngrok.io/action',
-                  json.dumps(
-                      {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
-                       'login': login_or_mail,
-                       'action': 'playing'}))
-
-
 # Функция которая проверяет и заменяет очки.
 def check_and_change_scores():
-    global info
     with open('scores.txt', 'r') as file:
         scores = file.read()
     if info[3] is None or int(scores) > info[3]:
@@ -873,15 +858,6 @@ def check_and_change_scores():
                           {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                            'login': login_or_mail,
                            'change_this': 'last_score', 'change_to_this': scores}))
-    data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
-                                    json.dumps(
-                                        {'version': 1.0,
-                                         'ip': socket.gethostbyname(socket.gethostname()),
-                                         'fast_login': '', 'login': login_or_mail,
-                                         'password': password})).text)
-    info = data['info'][0]
-    window.label_6.setText('Рекорд: ' + str(info[3]))
-    window.label_5.setText('Последние набранные очки: ' + str(info[4]))
 
 
 def main():
@@ -889,9 +865,6 @@ def main():
     ex = Test_conection_window()
     ex.show()
     app.exec_()
-    if playing:
-        thread_2 = threading.Thread(target=change_action_to_playing)
-        thread_2.start()
     return playing
 
 
@@ -909,14 +882,18 @@ def open_main_window():
     #     print('Этого произойти не должно.')
     # info = data['info'][0]
 
-    # Тут я хотел сделать оптимизацию с помощью потоков и я это сделал.
-    thread = threading.Thread(target=check_and_change_scores)
-    thread.start()
+    # Тут я хотел сделать оптимизацию с помощью потоков но PyQt кривой.(Оказалось что я кривой)
+    check_and_change_scores()
+
+    data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
+                                    json.dumps(
+                                        {'version': 1.0,
+                                         'ip': socket.gethostbyname(socket.gethostname()),
+                                         'fast_login': '', 'login': login_or_mail,
+                                         'password': password})).text)
+    info = data['info'][0]
     app = QApplication(sys.argv)
     ex = Main_window()
     ex.show()
     app.exec_()
-    if playing:
-        thread_2 = threading.Thread(target=change_action_to_playing)
-        thread_2.start()
     return playing

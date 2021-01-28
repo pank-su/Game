@@ -14,7 +14,7 @@ if __name__ == '__main__':
         if scores == 'None':
             break
         bool_ = gui_classes.open_main_window()
-    requests.post('http://2f9f839aebbd.ngrok.io/action',
+    requests.post('https://b2a076121e8e.ngrok.io/action',
                   json.dumps(
                       {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                        'login': gui_classes.login_or_mail,
