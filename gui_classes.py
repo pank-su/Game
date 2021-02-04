@@ -853,7 +853,7 @@ def check_and_change_scores():
                            'login': login_or_mail,
                            'change_this': 'last_score', 'change_to_this': scores}))
     else:
-        requests.post('hhttps://b2a076121e8e.ngrok.io/change',
+        requests.post('https://b2a076121e8e.ngrok.io/change',
                       json.dumps(
                           {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
                            'login': login_or_mail,
@@ -885,7 +885,7 @@ def open_main_window():
     # Тут я хотел сделать оптимизацию с помощью потоков но PyQt кривой.(Оказалось что я кривой)
     check_and_change_scores()
 
-    data = json.loads(requests.post('http://2f9f839aebbd.ngrok.io/login',
+    data = json.loads(requests.post('https://b2a076121e8e.ngrok.io/login',
                                     json.dumps(
                                         {'version': 1.0,
                                          'ip': socket.gethostbyname(socket.gethostname()),
