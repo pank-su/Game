@@ -773,6 +773,12 @@ class Numbers(QMainWindow, Ui_Form_3):
         else:
             self.error_dialog.showMessage('Ты ввёл неправильные числа.')
 
+    def send_again(self):
+        requests.post('https://b2a076121e8e.ngrok.io/register',
+                      json.dumps(
+                          {'version': 1.0, 'ip': socket.gethostbyname(socket.gethostname()),
+                           'event': 'wait_mail', 'event_info': reg_mail}))
+
 # Окно с таблицей лидеров и тп.
 class Main_window(QMainWindow, Ui_Form_5):
     def __init__(self):
