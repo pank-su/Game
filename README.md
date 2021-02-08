@@ -6,7 +6,7 @@
 - [For_lyceum](https://github.com/Cynep-SU/Game/tree/master/For_lyceum) - папка с отчётом, презентацией и несколько файлов с показом программы
 - [images](https://github.com/Cynep-SU/Game/tree/master/images) - папка с изображениями для спрайтов
 - [ui](https://github.com/Cynep-SU/Game/tree/master/ui) - папка с файлами .ui(интерфейсы Qt)
-- [main.py](https://github.com/Cynep-SU/Game/blob/master/main.py) - запускает скрипт 
+- [main.py](https://github.com/Cynep-SU/Game/blob/master/main.py) - запускает игру
 - [gui_classes.py](https://github.com/Cynep-SU/Game/blob/master/gui_classes.py) - файл ответственный за интерфейс Qt
 - [game_classes.py](https://github.com/Cynep-SU/Game/blob/master/game_classes.py) - файл ответственный за саму игру
 - [scores.txt](https://github.com/Cynep-SU/Game/blob/master/scores.txt) - файл где хранятся последние набранные очки
